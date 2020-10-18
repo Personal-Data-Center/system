@@ -7,4 +7,4 @@ def index(request):
     if request.user.is_authenticated:
         return HttpResponse("is logged in - username:" + request.user.username)
     else:
-         return HttpResponseRedirect("/accounts/login")
+         return HttpResponseRedirect("/cas/login")
