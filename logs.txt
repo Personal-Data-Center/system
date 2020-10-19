@@ -1,42 +1,11 @@
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 18, 2020 - 12:50:27
+October 19, 2020 - 00:38:21
 Django version 3.1.2, using settings 'system.settings'
 Starting development server at http://0.0.0.0:80/
 Quit the server with CONTROL-C.
 Performing system checks...
 
-System check identified no issues (0 silenced).
-October 18, 2020 - 12:52:47
-Django version 3.1.2, using settings 'system.settings'
-Starting development server at http://0.0.0.0:80/
-Quit the server with CONTROL-C.
 Performing system checks...
 
-System check identified no issues (0 silenced).
-October 18, 2020 - 12:56:15
-Django version 3.1.2, using settings 'system.settings'
-Starting development server at http://0.0.0.0:80/
-Quit the server with CONTROL-C.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-October 18, 2020 - 12:57:22
-Django version 3.1.2, using settings 'system.settings'
-Starting development server at http://0.0.0.0:80/
-Quit the server with CONTROL-C.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-October 18, 2020 - 12:58:10
-Django version 3.1.2, using settings 'system.settings'
-Starting development server at http://0.0.0.0:80/
-Quit the server with CONTROL-C.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-October 18, 2020 - 12:58:27
-Django version 3.1.2, using settings 'system.settings'
-Starting development server at http://0.0.0.0:80/
-Quit the server with CONTROL-C.
