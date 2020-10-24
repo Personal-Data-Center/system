@@ -5,6 +5,7 @@ from pdc import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . models import Service
+
 import docker
 import secrets
 import json
@@ -16,11 +17,23 @@ class List(APIView):
 
     def get(self, request):
         installedServices = Service.objects.all()
-        session_token = request.GET.get('token', False)
+        session_token = request.COOKIES.get('authorizator_session')
+        #session_token = request.GET.get('token', False)
         if auth.Api.pdcLoginCheck(session_token):
+            only_visible = request.GET.get('only_visible', "false")
+            if json.loads(only_visible.lower()):
+                installedServices = Service.objects.filter(is_visible=True)
+            else:
+                installedServices = Service.objects.all()
             services = '{ "service" : ['
             for i in range(0, len(installedServices)):
-                service = '{"name": "' + installedServices[i].name + '" , "docker_id": "' + installedServices[i].docker_id + '", "super": "' + str(installedServices[i].super) + '", "is_required":"' + str(installedServices[i].is_required) + '", "path":"' + installedServices[i].path + '", "icon":"' + installedServices[i].icon + '"},'
+                service = '{"name": "' + installedServices[i].name + \
+                '" , "docker_id": "' + installedServices[i].docker_id + \
+                '" , "is_visible": "' + str(installedServices[i].is_visible) + \
+                '", "super": "' + str(installedServices[i].super) + \
+                '", "is_required":"' + str(installedServices[i].is_required) + \
+                '", "path":"' + installedServices[i].path + \
+                '", "icon":"' + installedServices[i].icon + '"},'
                 services = services + service
             services = services[:-1] + "]}"
             content = json.loads(services)
@@ -32,7 +45,7 @@ class List(APIView):
 class Install(APIView):
 
     def post(self, request, format=None):
-        session_token = request.GET.get('token', False)
+        session_token = request.COOKIES.get('authorizator_session')
         service_name = request.GET.get('service_name', False)
         service_image = request.GET.get('service_image', False)
         service_super = request.GET.get('service_super', False)
@@ -54,14 +67,20 @@ class Install(APIView):
                         docker_service = client.services.create(
                         name=name_hex,image="traefik/whoami",
                         hostname=name_hex,networks=["pdc_pdc"],
-                        container_labels={"traefik.enable": "true", "traefik.http.routers."+ name_hex +".entrypoints": "web", "traefik.http.routers."+ name_hex +".rule": "PathPrefix(`/"+ name_hex +"`)", "traefik.http.services."+ name_hex +".loadbalancer.server.port": "80"})
+                        container_labels={"traefik.enable": "true",
+                         "traefik.http.routers."+ name_hex +".entrypoints": "web",
+                         "traefik.http.routers."+ name_hex +".rule": "PathPrefix(`/"+ name_hex +"`)",
+                         "traefik.http.services."+ name_hex +".loadbalancer.server.port": "80"})
                     except Exception as e:
                         content = {'status' : "error",'message' : str(e)}
                     try:
                         #add to database
                         service_path = "/" + name_hex
                         service_icon = "/" + name_hex + "/static/icon.png"
-                        django_service_model = Service(name=service_name, docker_id=docker_service.id, image=service_image, super=ast.literal_eval(service_super), is_required=False, path=service_path, icon=service_icon )
+                        django_service_model = Service(name=service_name,
+                        docker_id=docker_service.id, image=service_image,
+                        is_visible=True, super=ast.literal_eval(service_super),
+                        is_required=False, path=service_path, icon=service_icon )
                         django_service_model.save()
                         content = {'status' : "success", "message": "Service installed"}
                     except Exception as e:
@@ -79,7 +98,7 @@ class Install(APIView):
 class Remove(APIView):
 
     def post(self, request, format=None):
-        session_token = request.GET.get('token', False)
+        session_token = request.COOKIES.get('authorizator_session') 
         service_id = request.GET.get('service_id', False)
         #first check if super user pdcGetUser
         if ( auth.Api.pdcLoginCheck(session_token)):
