@@ -67,7 +67,7 @@ class Install(APIView):
                         docker_service = client.services.create(
                         name=name_hex,image="traefik/whoami",
                         hostname=name_hex,networks=["pdc_pdc"],
-                        container_labels={"traefik.enable": "true",
+                        labels={"traefik.enable": "true",
                          "traefik.http.routers."+ name_hex +".entrypoints": "web",
                          "traefik.http.routers."+ name_hex +".rule": "PathPrefix(`/"+ name_hex +"`)",
                          "traefik.http.services."+ name_hex +".loadbalancer.server.port": "80"})
@@ -98,7 +98,7 @@ class Install(APIView):
 class Remove(APIView):
 
     def post(self, request, format=None):
-        session_token = request.COOKIES.get('authorizator_session') 
+        session_token = request.COOKIES.get('authorizator_session')
         service_id = request.GET.get('service_id', False)
         #first check if super user pdcGetUser
         if ( auth.Api.pdcLoginCheck(session_token)):
