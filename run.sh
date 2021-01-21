@@ -1,4 +1,4 @@
 #! /bin/sh
 
-cd system
-python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:80 > logs.txt
+cd service
+python3 /service/manage.py migrate && python3 /service/manage.py runserver 0.0.0.0:80

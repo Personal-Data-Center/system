@@ -1,1 +1,1 @@
-# system
+# Blank Service Template
