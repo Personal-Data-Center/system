@@ -5,6 +5,7 @@ urlpatterns = [
     path('getservices/', api.getServices, name='getservices'),
     path('changepicture/', api.changePicture, name='changepicture'),
     path('changeuserpassword/', api.changePassword, name='changeuserpassword'),
+    path('changeuserinfo/', api.changeProfileInfo, name='changeuserinfo'),
     path('deleteprofilepicture/', api.deletePicture, name='deleteprofilepic'),
     path('getnodes/', api.getNodes, name='getnodes'),
     path('getnoderesources/', api.getNodeResources, name='getnoderesource'),

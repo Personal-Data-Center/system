@@ -136,13 +136,12 @@ def resetUserPassword(request):
 #Profile Management
 
 def changePicture(request):
-    username = request.GET.get('username', False)
     profilePic = {'profilePic' : request.FILES['profilePic']}
     if request.method == 'POST':
         if request.isApi is False:
             authorizatorKey = GrantedKey.objects.get(serviceName='authorizator').apiKey
             url = "http://authorizator/authorizator/api/changeprofilepic/?apiKey=" + authorizatorKey + "&"
-            username = 'username=' + username + '&'
+            username = 'username=' + request.user.username+ '&'
             authorizatorResponse = requests.post(url+username, files=profilePic).text
             authorizatorJson = json.loads(authorizatorResponse)
             content = authorizatorJson
@@ -153,12 +152,11 @@ def changePicture(request):
     return JsonResponse(content)
 
 def deletePicture(request):
-    username = request.GET.get('username', False)
     if request.method == 'POST':
         if request.isApi is False:
             authorizatorKey = GrantedKey.objects.get(serviceName='authorizator').apiKey
             url = "http://authorizator/authorizator/api/deleteprofilepic/?apiKey=" + authorizatorKey + "&"
-            username = 'username=' + username + '&'
+            username = 'username=' + request.user.username+ '&'
             authorizatorResponse = requests.post(url+username).text
             authorizatorJson = json.loads(authorizatorResponse)
             content = authorizatorJson
@@ -169,15 +167,14 @@ def deletePicture(request):
     return JsonResponse(content)
 
 def changePassword(request):
-    username = request.GET.get('username', False)
     password = request.GET.get('password', False)
     if request.method == 'POST':
         if request.isApi is False:
             authorizatorKey = GrantedKey.objects.get(serviceName='authorizator').apiKey
             url = "http://authorizator/authorizator/api/changeuserpassword/?apiKey=" + authorizatorKey + "&"
-            username = 'username=' + username + '&'
+            username = 'username=' + request.user.username+ '&'
             password = 'password=' + password + '&'
-            authorizatorResponse = requests.post(url+username).text
+            authorizatorResponse = requests.post(url+username+password).text
             authorizatorJson = json.loads(authorizatorResponse)
             content = authorizatorJson
         else:
@@ -187,13 +184,32 @@ def changePassword(request):
     return JsonResponse(content)
 
 def changeProfileInfo(request):
+    newUsername = request.GET.get('newUsername', request.user.username)
+    lastName = request.GET.get('lastName', request.user.lastName)
+    firstName = request.GET.get('firstName', request.user.firstName)
+    email = request.GET.get('email', request.user.email)
+    if request.user.admin:
+        admin = request.GET.get('admin', False)
+    else:
+        admin = False
     if request.method == 'POST':
         if request.isApi is False:
-            content = {'Success' : True}
+            authorizatorKey = GrantedKey.objects.get(serviceName='authorizator').apiKey
+            url = "http://authorizator/authorizator/api/changeuserinfo/?apiKey=" + authorizatorKey + "&"
+            username = 'username=' + request.user.username+ '&'
+            newUsername = 'newUsername=' + newUsername + '&'
+            lastName = 'lastName=' + lastName + '&'
+            firstName = 'firstName=' + firstName + '&'
+            email = 'email=' + email + '&'
+            admin = 'admin=' + str(admin) + '&'
+            authorizatorResponse = requests.post(url+username+firstName+newUsername+lastName+email+admin).text
+            authorizatorJson = json.loads(authorizatorResponse)
+            content = authorizatorJson
         else:
             content = {'Success' : False, 'error' : 'only user allowed'}
     else:
         content = {'Success' : False, 'Error' : 'not POST method'}
+    return JsonResponse(content)
 
 #Network Management
 
